@@ -2,8 +2,6 @@
 
 This repository is a collection of useful scripts and tools for TAs and professors to manage students workloads.
 
-## get_url.py
-=======
 ## Cronjobs
 
 ### ope-notebook-culler
