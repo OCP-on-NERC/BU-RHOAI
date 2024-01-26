@@ -39,7 +39,7 @@ spec:
                   #threshold to stop running notebooks. Currently set to 24 hours
                   cutoff_time=86400
                   current_time=$(date +%s)
-                  notebooks=$(oc get notebooks -n ope-rhods-testing-1fef2f -o jsonpath='{range .items[?(@.status.containerState.running)]}{.metadata.name}{" "}{.metadata.namespace}{" "}{.status.containerState.running.startedAt}{"\n"}{end}')
+                  notebooks=$(oc get notebooks -n rhods-notebooks -o jsonpath='{range .items[?(@.status.containerState.running)]}{.metadata.name}{" "}{.metadata.namespace}{" "}{.status.containerState.running.startedAt}{"\n"}{end}')
                   if [ -z "$notebooks" ]; then
                       echo "No running notebooks found"
                       exit 0
@@ -61,7 +61,7 @@ spec:
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               imagePullPolicy: IfNotPresent
-          serviceAccount: ope-notebook-culler
+          serviceAccount: nb-culler
           dnsPolicy: ClusterFirst
   successfulJobsHistoryLimit: 7
   failedJobsHistoryLimit: 7

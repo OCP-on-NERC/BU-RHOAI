@@ -6,7 +6,9 @@ This repository is a collection of useful scripts and tools for TAs and professo
 
 ### ope-notebook-culler
 
-This cronjob runs once every 24 hours at 7am, removing all notebooks & pvcs from the rhods-notebooks namespace. To add resources to the rhods-notebooks namespace:
+This cronjob runs once every 24 hours at 7am, shutting down all notebooks from the rhods-notebooks namespace. To add resources to the rhods-notebooks namespace:
+
+NOTE: PVCs persist this shutdown process.
 
 1. Ensure you are logged in to your OpenShift account via the CLI and you have access to rhods-notebooks namespace.
 2. Switch to rhods-notebooks namespace:
@@ -14,7 +16,7 @@ This cronjob runs once every 24 hours at 7am, removing all notebooks & pvcs from
 	oc project rhods-notebooks
 ```
 
-3. From cronjobs/ope-notebook-culler/ directory run:
+3. From cronjobs/notebook-culler/ directory run:
 ```
 	oc apply -k .
 ```
@@ -24,14 +26,14 @@ This cronjob runs once every 24 hours at 7am, removing all notebooks & pvcs from
 Alternatively, to run the script immediately: 
 
 1. Ensure you followed the steps above
-2. Verify the cronjob ope-notebook-culler exists
+2. Verify the cronjob nb-culler exists
 ```
-	oc get cronjob ope-notebook-culler
+	oc get cronjob nb-culler
 ```
 
 3. Run:
 ```
-	kubectl create -n rhods-notebooks job --from=cronjob/ope-notebook-culler ope-notebook-culler
+	kubectl create -n rhods-notebooks job --from=cronjob/nb-culler nb-culler
 ```
 
 	This will trigger the cronjob to spawn a job manually.
