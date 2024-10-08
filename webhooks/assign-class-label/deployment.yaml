@@ -23,7 +23,7 @@ spec:
           env:
             # EDIT VALUE HERE BEFORE RUNNING, must be comma separated
             - name: RHOAI_CLASS_GROUPS
-              value: "cs210,cs506,ee440"
+              value: "cs210,ds210"
       serviceAccountName: webhook-sa
       volumes:
         - name: cert
