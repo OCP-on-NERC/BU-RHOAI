@@ -21,7 +21,12 @@ def add_users_to_group(group):
     group_name = group.model.metadata.name
     LOG.info('adding to group %s: %s', group_name, users_to_add)
     LOG.info('removing from group %s: %s', group_name, users_to_remove)
+    # Update the group's users list
     group.patch({'users': list(users_in_rolebinding)})
+    # Remove users from the group
+    for user in users_to_remove:
+        group.model.users.remove(user)
+    group.patch({'users': list(group.model.users)})
 
 
 if __name__ == '__main__':
