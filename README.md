@@ -38,11 +38,9 @@ Alternatively, to run the script immediately:
 
 ### nb-culler
 
-This cronjob runs once every hours at the top of the hour, exclusively applied to notebooks associated with specific user group  and will not impact other notebooks within the rhods-notebooks namespace. The cronjob performs the following actions:
+This cronjob runs once every hours at the top of the hour, exclusively applied to notebooks associated with specific user group  and will not impact other notebooks within the rhods-notebooks namespace. The cronjob performs the following action:
 
 1. **Shuts down notebooks exceeding X hours of runtime**: any notebook found to have been running for more than X hours will be gracefully shut down to conserve resources. PVCs persist the shutdown process.
-2. **Deletes notebooks with wrong images**: students are allowed to launch notebook instances with their class image. Notebooks that are running images that are not approved for use will be deleted along with their associated PVCs.
-3. **Deletes notebooks with wrong container size**: notebooks that are configured with container sizes other than **X Small** will be deleted, including their PVCs.
 
 To add resources to the rhods-notebooks namespace:
 
@@ -52,7 +50,7 @@ To add resources to the rhods-notebooks namespace:
     oc project rhods-notebooks
 ```
 
-3. Ensure the environment variables for `GROUP_NAME`, `CUTOFF_TIME` (seconds), `IMAGE_NAME` are correctly set.
+3. Ensure the environment variables for `GROUP_NAME`, and `CUTOFF_TIME` (seconds) are correctly set.
 
 4. From cronjobs/nb-culler/ directory run:
 ```

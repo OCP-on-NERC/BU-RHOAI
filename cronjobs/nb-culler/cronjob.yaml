@@ -62,43 +62,37 @@ spec:
                           user_in_group2=true
                       fi
 
-                      if $user_in_group1 && $user_in_group2; then
-                          # Handle both group conditions
-                          if [[ $image != *$IMAGE_NAME_1* && $image != *$IMAGE_NAME_2* && $image != *$IMAGE_NAME_3* ]]; then
-                              echo "$nb is not using the correct images, deleting the notebook"
-                              oc delete notebook $nb -n $ns
-                              oc delete pvc $pvc -n $ns
-                          elif [[ $image == *$IMAGE_NAME_1* && $size != "X Small" ]]; then
-                              echo "$nb resource size is not correct for $IMAGE_NAME_1, deleting the notebook"
-                              oc delete notebook $nb -n $ns
-                              oc delete pvc $pvc -n $ns
-                          elif [[ ($image == *$IMAGE_NAME_2* || $image == *$IMAGE_NAME_3*) && $size != "Small" ]]; then
-                              echo "$nb resource size is not correct for $IMAGE_NAME_2 or $IMAGE_NAME_3, deleting the notebook"
-                              oc delete notebook $nb -n $ns
-                              oc delete pvc $pvc -n $ns
-                          elif [[ $image == *$IMAGE_NAME_1* && $difference -gt $CUTOFF_TIME_1 ]]; then
-                              echo "$nb is more than $(($CUTOFF_TIME_1 / 3600)) hours old, stopping the notebook"
-                              oc patch notebook $nb -n $ns --type merge -p '{"metadata":{"annotations":{"kubeflow-resource-stopped":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}}'
-                          elif [[ $image == *$IMAGE_NAME_2* || $image == *$IMAGE_NAME_3* ]]; then
-                              echo "$nb is using $IMAGE_NAME_2 or $IMAGE_NAME_3, no shutdown applied."
+                      # USER IS IN BOTH CLASSES
+                      if [[ $user_in_group1 == true && $user_in_group2 == true ]]; then
+
+                          if [[ $CUTOFF_TIME_1 -ge $CUTOFF_TIME_2 ]]; then
+                              LONGER_CUTOFF=$CUTOFF_TIME_1
+                          else
+                              LONGER_CUTOFF=$CUTOFF_TIME_2
                           fi
+
+                          if [[ $difference -gt $LONGER_CUTOFF ]]; then
+                              echo "$nb is more than $(($LONGER_CUTOFF / 3600)) hours old, stopping the notebook"
+                              oc patch notebook $nb -n $ns --type merge -p '{"metadata":{"annotations":{"kubeflow-resource-stopped":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}}'
+                          fi
+
+                      # USER IS IN CLASS ONE
                       elif $user_in_group1; then
                           # Handle group1 conditions
-                          if [[ $image != *$IMAGE_NAME_1* || $size != "X Small" ]]; then
-                              echo "$nb is not using the correct image or size, deleting the notebook"
-                              oc delete notebook $nb -n $ns
-                              oc delete pvc $pvc -n $ns
-                          elif [ $difference -gt $CUTOFF_TIME_1 ]; then
+                          if [ $difference -gt $CUTOFF_TIME_1 ]; then
                               echo "$nb is more than $(($CUTOFF_TIME_1 / 3600)) hours old, stopping the notebook"
                               oc patch notebook $nb -n $ns --type merge -p '{"metadata":{"annotations":{"kubeflow-resource-stopped":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}}'
                           fi
+
+                      # USER IS IN CLASS TWO
                       elif $user_in_group2; then
                           # Handle group2 conditions
-                          if [[ ($image != *$IMAGE_NAME_2* && $image != *$IMAGE_NAME_3*) || $size != "Small" ]]; then
-                              echo "$nb is not using the correct image or size, deleting the notebook"
-                              oc delete notebook $nb -n $ns
-                              oc delete pvc $pvc -n $ns
+                          if [ $difference -gt $CUTOFF_TIME_2 ]; then
+                              echo "$nb is more than $(($CUTOFF_TIME_2 / 3600)) hours old, stopping the notebook"
+                              oc patch notebook $nb -n $ns --type merge -p '{"metadata":{"annotations":{"kubeflow-resource-stopped":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}}}'
                           fi
+
+                      # USER IS IN NEITHER CLASS
                       else
                           echo "user $user does not belong to $GROUP_NAME_1 or $GROUP_NAME_2, deleting the notebook"
                           oc delete notebook $nb -n $ns
@@ -116,12 +110,8 @@ spec:
               - name: CUTOFF_TIME_1
                 value: "43200"
               # EDIT VALUE HERE BEFORE RUNNING
-              - name: IMAGE_NAME_1
-                value: "ucsls-f24"
-              - name: IMAGE_NAME_2
-                value: "jupyter-rust"
-              - name: IMAGE_NAME_3
-                value: "vscode-rust"
+              - name: CUTOFF_TIME_2
+                value: "43200"
               resources:
                 limits:
                   cpu: 100m
