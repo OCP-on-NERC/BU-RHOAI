@@ -50,6 +50,36 @@ objects:
         name: ${SERVICE_ACCOUNT_NB}
         namespace: ${NAMESPACE}
 
+  # CREATE POD READER ROLE BINDING
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: ${SERVICE_ACCOUNT_NB}-pod-reader
+      namespace: ${NAMESPACE}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: pod-reader
+    subjects:
+      - kind: ServiceAccount
+        name: ${SERVICE_ACCOUNT_NB}
+        namespace: ${NAMESPACE}
+
+  # CREATE NODE READER ROLE BINDING
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: ${NAMESPACE}-node-reader
+      namespace: ${NAMESPACE}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: node-reader
+    subjects:
+      - kind: ServiceAccount
+        name: ${SERVICE_ACCOUNT_NB}
+        namespace: ${NAMESPACE}
+
   # CREATE ROLE FOR LOCAL QUEUE
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: Role
@@ -80,7 +110,7 @@ objects:
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
     metadata:
-      name: ${SERVICE_ACCOUNT_NB}-kueue-clusterqueue-reader
+      name: ${NAMESPACE}-kueue-clusterqueue-reader
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: ClusterRole
@@ -89,6 +119,7 @@ objects:
       - kind: ServiceAccount
         name: ${SERVICE_ACCOUNT_NB}
         namespace: ${NAMESPACE}
+
 
   # OC AUTH EXEC (BINDINGS FOR DEFAULT SERVICE ACCOUNT)
   # BIND TO EXISTING EDIT ROLE

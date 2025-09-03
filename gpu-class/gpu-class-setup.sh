@@ -16,32 +16,35 @@ create_wb() {
     #set namespace
     namespace=$1
 
-    username=$(oc -n "$ns" get rolebinding edit -o json \
-    | jq -r '
-        (.subjects // [])
-        | map(.name)
-        | map(select(. != "jappavoo-40bu-2edu"))
-        | map(select(. != "sdanni-40redhat-2com"))
-        | map(select(. != "istaplet"))
-        | .[]
-    ')
+    # username=$(oc -n "$ns" get rolebinding edit -o json \
+    # | jq -r '
+    #     (.subjects // [])
+    #     | map(.name)
+    #     | map(select(. != "jappavoo-40bu-2edu"))
+    #     | map(select(. != "sdanni-40redhat-2com"))
+    #     | map(select(. != "istaplet"))
+    #     | .[]
+    # ')
 
-    user=$(oc -n "$ns" get rolebinding edit -o json \
-    | jq -r '
-        (.subjects // [])
-        | map(.name
-            | if test("@.*\\..*$")
-                then sub("@"; "-40") | gsub("\\.";"-2")
-                else .
-                end)
-        | map(select(. != "jappavoo-40bu-2edu"))
-        | map(select(. != "sdanni-40redhat-2com"))
-        | map(select(. != "istaplet"))
-        | .[]
-    ')
+    # user=$(oc -n "$ns" get rolebinding edit -o json \
+    # | jq -r '
+    #     (.subjects // [])
+    #     | map(.name
+    #         | if test("@.*\\..*$")
+    #             then sub("@"; "-40") | gsub("\\.";"-2")
+    #             else .
+    #             end)
+    #     | map(select(. != "jappavoo-40bu-2edu"))
+    #     | map(select(. != "sdanni-40redhat-2com"))
+    #     | map(select(. != "istaplet"))
+    #     | .[]
+    # ')
+
+    user="jappavoo-40bu-2edu"
+    username="jappavoo@bu.edu"
 
     # give notebook within namespace a name
-    notebook_name=cs599-${user}-wb
+    notebook_name=csw-dev
 
     params=(
         -p NOTEBOOK_NAME="$notebook_name"
@@ -59,16 +62,6 @@ create_wb() {
     echo "$notebook_name"
 }
 
-apply_localqueue() {
-    namespace=$1
-
-    local_params=(
-        -p NAMESPACE="$namespace"
-    )
-
-    oc process -f localqueue.yaml --local "${local_params[@]}" | "${create_resource_command[@]}" --as system:admin  1>&2
-}
-
 apply_rolebinding() {
     #set namespace and nb name
     namespace=$1
@@ -82,9 +75,19 @@ apply_rolebinding() {
     oc process -f rb.yaml --local "${rb_params[@]}" | "${create_resource_command[@]}" --as system:admin
 }
 
+apply_localqueue() {
+    namespace=$1
+
+    local_params=(
+        -p NAMESPACE="$namespace"
+    )
+
+    oc process -f localqueue.yaml --local "${local_params[@]}" | "${create_resource_command[@]}" --as system:admin  1>&2
+}
+
 apply_clusterq() {
 
-    oc apply -f  cluster_queue_role.yaml --as system:admin
+    oc apply -f  cluster_role.yaml --as system:admin
 }
 
 apply_clusterq

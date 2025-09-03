@@ -31,14 +31,17 @@ objects:
   metadata:
     annotations:
       notebooks.opendatahub.io/inject-oauth: 'true'
-      notebooks.opendatahub.io/last-image-selection: ${IMAGE_NAME}
+      notebooks.opendatahub.io/image-display-name: "csw-dev-F25"
+      notebooks.opendatahub.io/last-image-selection: ${IMAGE_NAME}:latest
       notebooks.opendatahub.io/last-size-selection: Small
+      opendatahub.io/notebook-image-desc: "csw-dev-F25"
       notebooks.opendatahub.io/oauth-logout-url: >-
         ${OPENSHIFT_URL}/${NAMESPACE}?notebookLogout=${NOTEBOOK_NAME}
       opendatahub.io/username: ${USER}
       openshift.io/description: ''
       openshift.io/display-name: ${NOTEBOOK_NAME}
-      opendatahub.io/image-display-name: ${IMAGE_NAME}
+      opendatahub.io/accelerator-name: ''
+      opendatahub.io/hardware-profile-name: ''
     name: ${NOTEBOOK_NAME}
     labels:
       ope-run: ${RUN_NAME}
@@ -100,7 +103,7 @@ objects:
                                     --ServerApp.tornado_settings={"user":"${USER}","hub_host":"${HUB_HOST}","hub_prefix":"projects/${NAMESPACE}"}
               - name: JUPYTER_IMAGE
                 value: >-
-                  ${IMAGE_REPO}/${IMAGE_NAME}
+                  ${IMAGE_REPO}/${IMAGE_NAME}:latest
             ports:
               - containerPort: 8888
                 name: notebook-port
@@ -112,7 +115,7 @@ objects:
               - mountPath: /dev/shm
                 name: shm
             image: >-
-                ${IMAGE_REPO}/${IMAGE_NAME}
+                ${IMAGE_REPO}/${IMAGE_NAME}:latest
             workingDir: /opt/app-root/src
           - resources:
               limits:
