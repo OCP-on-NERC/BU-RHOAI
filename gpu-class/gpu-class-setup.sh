@@ -11,37 +11,15 @@ run_name="gpu_class_test"
 image_name="csw-dev-f25"
 
 create_wb() {
-    random_id=$(openssl rand -hex 3)
-
     #set namespace
     namespace=$1
 
-    username=$(oc -n "$ns" get rolebinding edit -o json \
-    | jq -r '
-        (.subjects // [])
-        | map(.name)
-        | map(select(. != "jappavoo-40bu-2edu"))
-        | map(select(. != "sdanni-40redhat-2com"))
-        | map(select(. != "istaplet"))
-        | .[]
-    ')
+    username="jappavoo@bu.edu"
 
-    user=$(oc -n "$ns" get rolebinding edit -o json \
-    | jq -r '
-        (.subjects // [])
-        | map(.name
-            | if test("@.*\\..*$")
-                then sub("@"; "-40") | gsub("\\.";"-2")
-                else .
-                end)
-        | map(select(. != "jappavoo-40bu-2edu"))
-        | map(select(. != "sdanni-40redhat-2com"))
-        | map(select(. != "istaplet"))
-        | .[]
-    ')
+    user="jappavoo-40bu-2edu"
 
     # give notebook within namespace a name
-    notebook_name=cs599-${user}-wb
+    notebook_name="csw-dev"
 
     params=(
         -p NOTEBOOK_NAME="$notebook_name"
@@ -79,22 +57,35 @@ apply_rolebinding() {
         -p SERVICE_ACCOUNT_NB="$notebook_name"
     )
 
-    oc process -f rb.yaml --local "${rb_params[@]}" | "${create_resource_command[@]}" --as system:admin
+    oc process -f rbac_template.yaml --local "${rb_params[@]}" | "${create_resource_command[@]}" --as system:admin
 }
 
-apply_clusterq() {
+create_clusterrole_bindings() {
 
-    oc apply -f  cluster_queue_role.yaml --as system:admin
+    oc apply -f clusterrole.yaml --as system:admin
+    # oc create will fail if resource exists (safer)
+    oc create -f clusterrolebinding.yaml --as system:admin
 }
 
-apply_clusterq
+add_sa_to_clusterrolebinding() {
+    namespace=$1
+    notebook_name=$2
+
+    oc adm policy add-cluster-role-to-user pod-reader --rolebinding-name="csw-pod-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
+    oc adm policy add-cluster-role-to-user node-reader --rolebinding-name="csw-node-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
+    oc adm policy add-cluster-role-to-user kueue-clusterqueue-reader --rolebinding-name="csw-kueue-clusterqueue-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
+}
+
+# create_clusterrole_bindings
 
 oc get ns | grep "^${CLASS_NAME}-" | awk '{print $1}' | while read ns; do
+    # ns="bu-cs599-pmpp-cuda-71cd48"
     oc project "$ns"
 
     #create a workbench and save the name of the notebook to apply rolebindings
     nb_name="$(create_wb "$ns")"
     apply_rolebinding "$ns" "$nb_name"
     apply_localqueue "$ns"
+    add_sa_to_clusterrolebinding "$ns" "$nb_name"
 
 done

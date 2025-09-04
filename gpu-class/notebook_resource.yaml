@@ -100,7 +100,7 @@ objects:
                                     --ServerApp.tornado_settings={"user":"${USER}","hub_host":"${HUB_HOST}","hub_prefix":"projects/${NAMESPACE}"}
               - name: JUPYTER_IMAGE
                 value: >-
-                  ${IMAGE_REPO}/${IMAGE_NAME}
+                  ${IMAGE_REPO}/${IMAGE_NAME}:latest
             ports:
               - containerPort: 8888
                 name: notebook-port
@@ -112,7 +112,7 @@ objects:
               - mountPath: /dev/shm
                 name: shm
             image: >-
-                ${IMAGE_REPO}/${IMAGE_NAME}
+                ${IMAGE_REPO}/${IMAGE_NAME}:latest
             workingDir: /opt/app-root/src
           - resources:
               limits:
