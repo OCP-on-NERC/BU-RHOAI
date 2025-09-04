@@ -79,7 +79,7 @@ add_sa_to_clusterrolebinding() {
 # create_clusterrole_bindings
 
 oc get ns | grep "^${CLASS_NAME}-" | awk '{print $1}' | while read ns; do
-    # ns="bu-cs599-pmpp-cuda-71cd48"
+    #ns="ja-ope-test"
     oc project "$ns"
 
     #create a workbench and save the name of the notebook to apply rolebindings

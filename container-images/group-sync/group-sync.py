@@ -1,6 +1,6 @@
 import os
 import sys
-import openshift as oc
+import openshift_client as oc
 import logging
 
 LOG = logging.getLogger(__name__)
@@ -13,7 +13,8 @@ def add_users_to_group(group):
     users_in_rolebinding = set(
         subject['name'] for subject in rolebinding.model.subjects
     )
-    users_in_group = set(group.model.users)
+    # Handle case where group.model.users might be None
+    users_in_group = set(group.model.users) if group.model.users else set()
 
     users_to_add = users_in_rolebinding.difference(users_in_group)
     users_to_remove = users_in_group.difference(users_in_rolebinding)

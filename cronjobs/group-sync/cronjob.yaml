@@ -13,15 +13,15 @@ spec:
           serviceAccountName: group-sync
           containers:
           - name: group-sync
-            image: ghcr.io/ocp-on-nerc/bu-rhoai:toolkit
-            command: ["python", "group-sync.py"]
+            image: quay.io/sdanni/bu-rhoai:toolkit
+            command: ["python3", "group-sync.py"]
             env:
             # EDIT VALUE HERE BEFORE RUNNING
             - name: GROUP_NAME
-              value: <group>
+              value: cs210
             # EDIT VALUE HERE BEFORE RUNNING
             - name: NAMESPACE
-              value: <namespace>
+              value: cs210-f25-ab47f6
             imagePullPolicy: Always
           restartPolicy: Never
   successfulJobsHistoryLimit: 7

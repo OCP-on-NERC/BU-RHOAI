@@ -15,7 +15,7 @@ This offers us a way to keep class users added to course namespaces via ColdFron
     oc project <namespace>
 ```
 
-3. Update the `GROUP_NAME` and `NAMESPACE` env variables in cronjobs/group-sync/cronjob.yaml
+3. Update the `GROUP_NAME` and `NAMESPACE` env variables in cronjobs/group-sync/cronjob.yaml and update `namespace` variable in kustomization.yaml
 4. From cronjobs/group-sync/ directory run:
 ```
     oc apply -k . --as system:admin
@@ -33,7 +33,7 @@ Alternatively, to run the script immediately:
 
 3. Run:
 ```
-    kubectl create -n rhods-notebooks job --from=cronjob/group-sync group-sync
+    kubectl create -n <class_namespace> job --from=cronjob/group-sync group-sync
 ```
 
 ### nb-culler
