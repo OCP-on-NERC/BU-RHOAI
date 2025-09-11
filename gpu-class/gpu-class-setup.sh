@@ -72,7 +72,7 @@ add_sa_to_clusterrolebinding() {
     notebook_name=$2
 
     oc adm policy add-cluster-role-to-user pod-reader --rolebinding-name="csw-pod-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
-    oc adm policy add-cluster-role-to-user node-reader --rolebinding-name="csw-node-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
+    oc adm policy add-cluster-role-to-user nerc-node-reader --rolebinding-name="csw-node-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
     oc adm policy add-cluster-role-to-user kueue-clusterqueue-reader --rolebinding-name="csw-kueue-clusterqueue-reader" system:serviceaccount:$namespace:$notebook_name --as system:admin
 }
 
