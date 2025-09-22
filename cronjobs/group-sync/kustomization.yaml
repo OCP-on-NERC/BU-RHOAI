@@ -7,4 +7,4 @@ resources:
   - rolebinding.yaml
   - serviceaccount.yaml
 # EDIT VALUE HERE BEFORE APPLYING
-namespace: <namespace>
+namespace: cs210-f25-ab47f6

@@ -6,4 +6,4 @@ resources:
   - cronjob.yaml
   - rolebinding.yaml
   - serviceaccount.yaml
-namespace: rhods-notebooks
+namespace: ope-rhods-testing
