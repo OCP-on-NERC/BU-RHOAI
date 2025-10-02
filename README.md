@@ -74,6 +74,36 @@ Alternatively, to run the script immediately:
 
 This will trigger the cronjob to spawn a job manually.
 
+### multiple-ns-group-sync
+This cronjob runs once every hours at the top of the hour, adding all users with the edit rolebinding in the specified namespaces to the specified group. This cronjob differs from the original `group-sync` cronjob by syncing with multiple namespaces rather than just one namespace.
+
+1. Ensure you are logged in to your OpenShift account via the CLI and you have access to ope-rhods-testing namespace.
+Then run:
+```
+oc project ope-rhods-testing
+```
+2. Ensure the environment variables for `GROUP_NAME`, and `CLASS_NAME` are correctly set.
+
+3. From cronjobs/multiple-ns-group-sync directory run:
+
+```
+    oc apply -k . --as system:admin
+```
+
+
+This will deploy all the necessary resources for the cronjob to run on the specified schedule.(Every hour by default)
+
+Alternatively, to run the script immediately:
+
+1. Ensure you followed the steps above
+2. Verify the cronjob `multiple-ns-group-sync` exists
+```
+    oc get cronjob multiple-ns-group-sync
+```
+3.
+````
+    kubectl create job --from=cronjob/multiple-ns-group-sync -n ope-rhods-testing multiple-ns-group-sync
+````
 
 ## Scripts
 
