@@ -17,8 +17,13 @@ spec:
           ports:
             - containerPort: 443
           volumeMounts:
-            - name: cert
-              mountPath: /certs
+            - name: tls
+              mountPath: /certs/webhook.crt
+              subPath: tls.crt
+              readOnly: true
+            - name: tls
+              mountPath: /certs/webhook.key
+              subPath: tls.key
               readOnly: true
           resources:
             limits:
@@ -30,6 +35,6 @@ spec:
               value: "cs210,cs599-pmpp"
       serviceAccountName: webhook-sa
       volumes:
-        - name: cert
+        - name: tls
           secret:
-            secretName: webhook-cert
+            secretName: assign-class-label-tls

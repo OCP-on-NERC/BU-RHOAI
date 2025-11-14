@@ -142,57 +142,13 @@ In order to modify the deployment follow these steps:
 
 1. Modify the GROUPS env variable to contain the list of classes (openshift groups) of which you would like to assign class labels. This file is found here: webhooks/assign-class-label/deployment.yaml
 
-2. Generate a new OpenSSL certificate
+2. Change namespace variable in the kubernetes manifests to match namespace you want the webhook to be deployed to.
 
-    ```
-    openssl req -x509 -sha256 -newkey rsa:2048 -keyout webhook.key -out webhook.crt -days 1024 -nodes -addext "subjectAltName = DNS.1:service_name.namespace.svc"
-    ```
-
-    When deployed to rhods-notebooks the command was specified as such:
-
-    ```
-    openssl req -x509 -sha256 -newkey rsa:2048 -keyout webhook.key -out webhook.crt -days 1024 -nodes -addext "subjectAltName = DNS.1:assign-class-label-webhook.rhods-notebooks.svc"
-    ```
-
-3. Add the cert and key to the required resources:
-
-    ```
-    cat webhook.crt | base64 | tr -d '\n'
-    ```
-
-    ```
-    cat webhook.key | base64 | tr -d '\n'
-    ```
-
-    This will encode the certificate and key in base64 format which is required. Copy the output of the webhook.crt to the caBundle in webhooks/assign-class-label/webhook-config.yaml. Then create a secret.yaml that looks like this
-
-    ```
-    apiVersion: v1
-    kind: Secret
-    metadata:
-        name: webhook-cert
-    type: Opaque
-    data:
-        webhook.crt:
-        webhook.key:
-    ```
-
-    Copy and paste the output of the cat command to the respective fields for webhook.crt and webhook.key. Then execute
-
-    ```
-    oc apply -f secret.yaml --as system:admin
-    ```
-
-    within the same namespace that your webhook will be deployed to.
-
-
-4. Change namespace variable in the kubernetes manifests to match namespace you want the webhook to be deployed to.
-
-5. From webhooks/assign-class-label/ directory run:
+3. From webhooks/assign-class-label/ directory run:
 ```
     oc apply -k . --as system:admin
 ```
 
-***Steps 2, 3, and 4 are only required if you are deploying to a new namespace/environment.***
+***Step 2 is only required if you are deploying to a new namespace/environment.***
 
 The python script and docker image used for the webserver should not need changes made to it. But in the case that changes must be made, the Dockerfile and python script can be found at docker/src/python/assign-class-label/.
