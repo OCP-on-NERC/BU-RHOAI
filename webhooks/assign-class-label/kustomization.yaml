@@ -5,10 +5,11 @@ commonLabels:
   app: assign-class-label-webhook
 
 resources:
+  - issuer.yaml
+  - certificate.yaml
   - deployment.yaml
   - service.yaml
   - webhook-config.yaml
   - serviceaccount.yaml
   - role.yaml
   - rolebinding.yaml
-  - secret.yaml
