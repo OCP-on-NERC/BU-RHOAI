@@ -32,7 +32,7 @@ spec:
           env:
             # EDIT VALUE HERE BEFORE RUNNING, must be comma separated
             - name: RHOAI_CLASS_GROUPS
-              value: "cs210,cs599-pmpp"
+              value: "cs210,dsp562"
       serviceAccountName: webhook-sa
       volumes:
         - name: tls
