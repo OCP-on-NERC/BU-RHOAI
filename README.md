@@ -10,13 +10,14 @@ This cronjob runs once every hours at the top of the hour, adding all users with
 This offers us a way to keep class users added to course namespaces via ColdFront in sync with the in cluster OCP course group. To run this cronjob:
 
 1. Ensure you are logged in to your OpenShift account via the CLI and you have access to rhods-notebooks namespace.
-2. Switch to your course namespace:
+2. Ensure that if multiple courses are running the groupsync cronjob, that the clusterrolebinding name in cronjobs/group-sync/clusterrolebinding.yaml is changed, as to not overwrite permissions for the cronjobs.
+3. Switch to your course namespace:
 ```
     oc project <namespace>
 ```
 
-3. Update the `GROUP_NAME` and `NAMESPACE` env variables in cronjobs/group-sync/cronjob.yaml and update `namespace` variable in kustomization.yaml
-4. From cronjobs/group-sync/ directory run:
+4. Update the `GROUP_NAME` and `NAMESPACE` env variables in cronjobs/group-sync/cronjob.yaml and update `namespace` variable in kustomization.yaml
+5. From cronjobs/group-sync/ directory run:
 ```
     oc apply -k . --as system:admin
 ```

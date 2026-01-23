@@ -1,6 +1,7 @@
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  # CHANGE THIS VALUE TO BE RELEVANT TO CLASS NAME (if multiple classes are running group sync)
   name: group-sync
 subjects:
   - kind: ServiceAccount
