@@ -15,6 +15,8 @@ This offers us a way to keep class users added to course namespaces via ColdFron
     oc project <namespace>
 ```
 
+2.5. If running group-sync for multiple classes, ensure you change the name in the clusterrolebinding to make sure there are no conflicts in the rolebinding name.
+
 3. Update the `GROUP_NAME` and `NAMESPACE` env variables in cronjobs/group-sync/cronjob.yaml and update `namespace` variable in kustomization.yaml
 4. From cronjobs/group-sync/ directory run:
 ```
